@@ -1,0 +1,47 @@
+specVersion: 0.0.2
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: FryCook
+    network: mainnet
+    source:
+      address: "0x94039E06bCEee1B1A8108c46Be224C66Fc99C87e"
+      abi: FryCook
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Deposit
+        - EmergencyWithdraw
+        - RoleAdminChanged
+        - RoleGranted
+        - RoleRevoked
+        - Withdraw
+      abis:
+        - name: FryCook
+          file: ./abis/FryCook.json
+        - name: UniswapV2Pair
+          file: ./abis/UniswapV2Pair.json
+      eventHandlers:
+        - event: Deposit(indexed address,indexed address,indexed uint256,uint256)
+          handler: handleDeposit
+        - event: EmergencyWithdraw(indexed address,indexed uint256,uint256)
+          handler: handleEmergencyWithdraw
+        - event: RoleAdminChanged(indexed bytes32,indexed bytes32,indexed bytes32)
+          handler: handleRoleAdminChanged
+        - event: RoleGranted(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleGranted
+        - event: RoleRevoked(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleRevoked
+        - event: Withdraw(indexed address,indexed address,indexed uint256,uint256)
+          handler: handleWithdraw
+      callHandlers:
+        - function: add(uint256,address,uint256,uint256,uint256,uint256,bool)
+          handler: handleAddPool
+        - function: set(uint256,uint256,bool)
+          handler: handleSetPoolAllocPoint
+        - function: migrate(uint256)
+          handler: handleMigrate
+      file: ./src/mapping.ts
